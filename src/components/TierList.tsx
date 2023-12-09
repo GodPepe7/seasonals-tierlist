@@ -11,6 +11,23 @@ const initialTiers: Tier[] = [
 
 function TierList() {
   const [tiers, setTiers] = useState(initialTiers);
+
+  const handleOnDrop = (e: React.DragEvent, indexInTiers: number) => {
+    const animeWidget = e.dataTransfer.getData("imgUrl") as string;
+    const toBeAddedWidget: Anime = { url: animeWidget, title: "test" };
+    setTiers((prevState) => {
+      return prevState.map((tier, index) =>
+        index === indexInTiers
+          ? { ...tier, anime: [...tier.anime, toBeAddedWidget] }
+          : tier
+      );
+    });
+  };
+
+  const handleDragOver = (e: React.DragEvent) => {
+    e.preventDefault();
+  };
+
   return (
     <div className="grid grid-cols-[100px_auto] gap-y-1">
       {tiers.map(({ name, color, anime }, index) => (
@@ -23,6 +40,8 @@ function TierList() {
           </div>
           <div
             className="bg-slate-900 flex flex-wrap"
+            onDrop={(e) => handleOnDrop(e, index)}
+            onDragOver={handleDragOver}
             key={index}
           >
             {anime.map(({ url, title }) => (
