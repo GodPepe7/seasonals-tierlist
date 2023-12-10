@@ -1,3 +1,4 @@
+import { Fragment, useRef } from "react";
 import { Tier, Anime, AnimeWithPlacement } from "../types";
 import AnimeWidget from "./AnimeWidget";
 
@@ -8,10 +9,11 @@ type TierListProps = {
 };
 
 function TierList({ tiers, setTiers, setAnime }: TierListProps) {
+  const draggedOverIndex = useRef<number>(0);
+
   const handleOnDrop = (e: React.DragEvent, indexInTierList: number) => {
     const animeJson = e.dataTransfer.getData("animeWithPlacement") as string;
     const animeWidget = JSON.parse(animeJson) as AnimeWithPlacement;
-    // from animeselection to tierlist: delete from selection and put it into tier
     if (animeWidget.currentPlacement === "animeselection") {
       setAnime((prevState) =>
         prevState.filter(({ title }) => title !== animeWidget.title)
@@ -28,15 +30,13 @@ function TierList({ tiers, setTiers, setAnime }: TierListProps) {
       });
     }
     setTiers((prevState) => {
-      return prevState.map((tier, index) =>
-        index === indexInTierList
-          ? { ...tier, anime: [...tier.anime, animeWidget] }
-          : tier
-      );
+      if (prevState[indexInTierList].anime.includes(animeWidget))
+        return prevState;
+      const copy = [...prevState];
+      const animeList = copy[indexInTierList].anime;
+      animeList.splice(draggedOverIndex.current, 0, animeWidget);
+      return copy;
     });
-
-    // from tier to another tier: delete from original tier and put it into other tier
-    // from tier to selection: delete from original tier and put it back into selection
   };
 
   const handleDragOver = (e: React.DragEvent) => {
@@ -46,7 +46,7 @@ function TierList({ tiers, setTiers, setAnime }: TierListProps) {
   return (
     <div className="grid grid-cols-[100px_auto] gap-y-1">
       {tiers.map(({ name, color, anime }, index) => (
-        <>
+        <Fragment key={index}>
           <div
             className={`font-bold text-center text-3xl p-4`}
             style={{ backgroundColor: color }}
@@ -57,15 +57,17 @@ function TierList({ tiers, setTiers, setAnime }: TierListProps) {
             className="bg-slate-900 flex flex-wrap"
             onDrop={(e) => handleOnDrop(e, index)}
             onDragOver={handleDragOver}
-            key={index}
           >
-            {anime.map((anime) => (
+            {anime.map((anime, inTierIndex) => (
               <AnimeWidget
                 animeWithPlacement={{ ...anime, currentPlacement: index }}
+                index={inTierIndex}
+                draggedOverRef={draggedOverIndex}
+                key={inTierIndex}
               />
             ))}
           </div>
-        </>
+        </Fragment>
       ))}
     </div>
   );

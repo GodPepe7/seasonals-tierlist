@@ -22,6 +22,10 @@ function App() {
       title: "Shangri La",
       url: "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/bx151970-qFKtRhOaSqa0.jpg",
     },
+    {
+      title: "The Eminence in Shadow Season 2",
+      url: "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx161964-JpkEbHI8ivaP.jpg",
+    },
   ];
   const [anime, setAnime] = useState(initialAnime);
 

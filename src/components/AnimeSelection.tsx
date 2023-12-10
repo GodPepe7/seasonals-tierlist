@@ -1,5 +1,6 @@
 import { Anime, AnimeWithPlacement, Tier } from "../types";
 import AnimeWidget from "./AnimeWidget";
+import { useRef } from "react";
 
 type AnimeSelectionProps = {
   anime: Anime[];
@@ -8,6 +9,8 @@ type AnimeSelectionProps = {
 };
 
 function AnimeSelection({ anime, setAnime, setTiers }: AnimeSelectionProps) {
+  const draggedOverRef = useRef<number>(0);
+
   const handleDragOver = (e: React.DragEvent) => {
     e.preventDefault();
   };
@@ -31,7 +34,11 @@ function AnimeSelection({ anime, setAnime, setTiers }: AnimeSelectionProps) {
         return newState;
       });
     }
-    setAnime((prevState) => [...prevState, animeWidget]);
+    setAnime((prevState) => {
+      const copy = [...prevState];
+      copy.splice(draggedOverRef.current, 0, animeWidget);
+      return copy;
+    });
   };
 
   return (
@@ -43,7 +50,9 @@ function AnimeSelection({ anime, setAnime, setTiers }: AnimeSelectionProps) {
       {anime.map((anime, index) => (
         <AnimeWidget
           animeWithPlacement={{ ...anime, currentPlacement: "animeselection" }}
+          index={index}
           key={index}
+          draggedOverRef={draggedOverRef}
         />
       ))}
     </div>
