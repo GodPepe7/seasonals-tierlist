@@ -1,20 +1,23 @@
+import { AnimeWithPlacement } from "../types";
+
 type AnimeWidgetProps = {
-  url: string;
-  title: string;
+  animeWithPlacement: AnimeWithPlacement;
 };
 
-function AnimeWidget({ url, title }: AnimeWidgetProps) {
-  const handleOnDrag = (e: React.DragEvent, url: string) => {
-    e.dataTransfer.setData("imgUrl", url);
+function AnimeWidget({ animeWithPlacement }: AnimeWidgetProps) {
+  const { url, title, currentPlacement } = animeWithPlacement;
+  const handleOnDrag = (e: React.DragEvent) => {
+    const animeToJson = JSON.stringify({ url, title, currentPlacement });
+    e.dataTransfer.setData("animeWithPlacement", animeToJson);
   };
 
   return (
     <img
       src={url}
       alt={title}
-      className="aspect-[3/4] h-[200px]"
+      className="aspect-[3/4] h-[150px]"
       draggable
-      onDragStart={(e) => handleOnDrag(e, url)}
+      onDragStart={(e) => handleOnDrag(e)}
     />
   );
 }

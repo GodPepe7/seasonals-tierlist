@@ -1,27 +1,42 @@
-import { useState } from "react";
-import { Tier, Anime } from "../types";
+import { Tier, Anime, AnimeWithPlacement } from "../types";
+import AnimeWidget from "./AnimeWidget";
 
-const initialTiers: Tier[] = [
-  { name: "S", color: "red", anime: [] },
-  { name: "A", color: "orange", anime: [] },
-  { name: "B", color: "yellow", anime: [] },
-  { name: "C", color: "green", anime: [] },
-  { name: "D", color: "blue", anime: [] },
-];
+type TierListProps = {
+  tiers: Tier[];
+  setTiers: React.Dispatch<React.SetStateAction<Tier[]>>;
+  setAnime: React.Dispatch<React.SetStateAction<Anime[]>>;
+};
 
-function TierList() {
-  const [tiers, setTiers] = useState(initialTiers);
-
-  const handleOnDrop = (e: React.DragEvent, indexInTiers: number) => {
-    const animeWidget = e.dataTransfer.getData("imgUrl") as string;
-    const toBeAddedWidget: Anime = { url: animeWidget, title: "test" };
+function TierList({ tiers, setTiers, setAnime }: TierListProps) {
+  const handleOnDrop = (e: React.DragEvent, indexInTierList: number) => {
+    const animeJson = e.dataTransfer.getData("animeWithPlacement") as string;
+    const animeWidget = JSON.parse(animeJson) as AnimeWithPlacement;
+    // from animeselection to tierlist: delete from selection and put it into tier
+    if (animeWidget.currentPlacement === "animeselection") {
+      setAnime((prevState) =>
+        prevState.filter(({ title }) => title !== animeWidget.title)
+      );
+    } else {
+      setTiers((prevState) => {
+        const index = animeWidget.currentPlacement as number;
+        const updatedAnimeList = prevState[index].anime.filter(
+          ({ title }) => title !== animeWidget.title
+        );
+        const newState = [...prevState];
+        newState[index].anime = updatedAnimeList;
+        return newState;
+      });
+    }
     setTiers((prevState) => {
       return prevState.map((tier, index) =>
-        index === indexInTiers
-          ? { ...tier, anime: [...tier.anime, toBeAddedWidget] }
+        index === indexInTierList
+          ? { ...tier, anime: [...tier.anime, animeWidget] }
           : tier
       );
     });
+
+    // from tier to another tier: delete from original tier and put it into other tier
+    // from tier to selection: delete from original tier and put it back into selection
   };
 
   const handleDragOver = (e: React.DragEvent) => {
@@ -44,8 +59,10 @@ function TierList() {
             onDragOver={handleDragOver}
             key={index}
           >
-            {anime.map(({ url, title }) => (
-              <img alt={title} src={url} className="aspect-[3/4] h-[200px]" />
+            {anime.map((anime) => (
+              <AnimeWidget
+                animeWithPlacement={{ ...anime, currentPlacement: index }}
+              />
             ))}
           </div>
         </>
