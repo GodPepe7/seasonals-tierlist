@@ -11,7 +11,7 @@ type TierListProps = {
 function TierList({ tiers, setTiers, setAnime }: TierListProps) {
   const draggedOverIndex = useRef<number>(0);
 
-  const handleOnDrop = (e: React.DragEvent, indexInTierList: number) => {
+  const handleDrag = (e: React.DragEvent) => {
     const animeJson = e.dataTransfer.getData("animeWithPlacement") as string;
     const animeWidget = JSON.parse(animeJson) as AnimeWithPlacement;
     if (animeWidget.currentPlacement === "animeselection") {
@@ -29,6 +29,11 @@ function TierList({ tiers, setTiers, setAnime }: TierListProps) {
         return newState;
       });
     }
+  };
+
+  const handleOnDrop = (e: React.DragEvent, indexInTierList: number) => {
+    const animeJson = e.dataTransfer.getData("animeWithPlacement") as string;
+    const animeWidget = JSON.parse(animeJson) as AnimeWithPlacement;
     setTiers((prevState) => {
       if (prevState[indexInTierList].anime.includes(animeWidget))
         return prevState;
@@ -57,6 +62,7 @@ function TierList({ tiers, setTiers, setAnime }: TierListProps) {
             className="bg-slate-900 flex flex-wrap"
             onDrop={(e) => handleOnDrop(e, index)}
             onDragOver={handleDragOver}
+            onDrag={handleDrag}
           >
             {anime.map((anime, inTierIndex) => (
               <AnimeWidget

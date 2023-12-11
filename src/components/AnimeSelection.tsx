@@ -15,10 +15,9 @@ function AnimeSelection({ anime, setAnime, setTiers }: AnimeSelectionProps) {
     e.preventDefault();
   };
 
-  const handleOnDrop = (e: React.DragEvent) => {
+  const handleDrag = (e: React.DragEvent) => {
     const animeJson = e.dataTransfer.getData("animeWithPlacement") as string;
     const animeWidget = JSON.parse(animeJson) as AnimeWithPlacement;
-    // from animeselection to tierlist: delete from selection and put it into tier
     if (animeWidget.currentPlacement === "animeselection") {
       setAnime((prevState) =>
         prevState.filter(({ title }) => title !== animeWidget.title)
@@ -34,6 +33,11 @@ function AnimeSelection({ anime, setAnime, setTiers }: AnimeSelectionProps) {
         return newState;
       });
     }
+  };
+
+  const handleOnDrop = (e: React.DragEvent) => {
+    const animeJson = e.dataTransfer.getData("animeWithPlacement") as string;
+    const animeWidget = JSON.parse(animeJson) as AnimeWithPlacement;
     setAnime((prevState) => {
       const copy = [...prevState];
       copy.splice(draggedOverRef.current, 0, animeWidget);
@@ -46,6 +50,7 @@ function AnimeSelection({ anime, setAnime, setTiers }: AnimeSelectionProps) {
       className="flex flex-wrap bg-slate-900 gap-2 min-h-[150px]"
       onDrop={handleOnDrop}
       onDragOver={handleDragOver}
+      onDrag={handleDrag}
     >
       {anime.map((anime, index) => (
         <AnimeWidget

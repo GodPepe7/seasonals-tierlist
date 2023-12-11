@@ -26,7 +26,6 @@ function AnimeWidget({
       draggable
       onDragStart={handleOnDrag}
       onDragEnter={() => (draggedOverRef.current = index)}
-      onDragOver={(e) => e.preventDefault}
     />
   );
 }
