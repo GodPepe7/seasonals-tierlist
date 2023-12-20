@@ -20,7 +20,9 @@ function YearSelect({ setYear }: YearSelectProps) {
         className="w-full bg-slate-900 p-2"
       >
         {availableYears.map((year) => (
-          <option value={year}>{year}</option>
+          <option key={year} value={year}>
+            {year}
+          </option>
         ))}
       </select>
     </div>
