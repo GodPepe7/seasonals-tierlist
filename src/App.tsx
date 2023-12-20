@@ -6,6 +6,7 @@ import {
   DndContext,
   DragEndEvent,
   DragOverEvent,
+  DragOverlay,
   DragStartEvent,
   UniqueIdentifier,
   rectIntersection,
@@ -120,6 +121,11 @@ function App() {
           <AnimeSelection
             anime={anime.filter((anime) => anime.tierId === "selection")}
           />
+          <DragOverlay>
+            {draggedAnime ? (
+              <AnimeWidget title={draggedAnime.title} url={draggedAnime.url} />
+            ) : null}
+          </DragOverlay>
         </div>
       </DndContext>
     </div>
