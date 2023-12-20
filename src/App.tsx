@@ -1,7 +1,7 @@
 import { useState } from "react";
 import AnimeSelection from "./components/AnimeSelection";
 import TierList from "./components/TierList";
-import { Anime, Tier } from "./types";
+import { Tier } from "./types";
 import {
   DndContext,
   DragEndEvent,
@@ -13,6 +13,7 @@ import {
 } from "@dnd-kit/core";
 import { arrayMove } from "@dnd-kit/sortable";
 import AnimeWidget from "./components/AnimeWidget";
+import useFetchAnime from "./hooks/useFetchAnime";
 
 const initialTiers: Tier[] = [
   { id: "s", name: "S", color: "red" },
@@ -22,43 +23,10 @@ const initialTiers: Tier[] = [
   { id: "d", name: "D", color: "blue" },
 ];
 
-const initialAnime: Anime[] = [
-  {
-    id: "1",
-    title: "Frieren",
-    url: "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx154587-n1fmjRv4JQUd.jpg",
-    tierId: "s",
-  },
-  {
-    id: "2",
-    title: "Shangri La",
-    url: "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/bx151970-qFKtRhOaSqa0.jpg",
-    tierId: "s",
-  },
-  {
-    id: "3",
-    title: "The Eminence in Shadow Season 2",
-    url: "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx161964-JpkEbHI8ivaP.jpg",
-    tierId: "selection",
-  },
-  {
-    id: "4",
-    title: "Tokyo Revengers",
-    url: "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx163329-lGJRnYV9dcjc.jpg",
-    tierId: "selection",
-  },
-  {
-    id: "5",
-    title: "The Apothecary Diaries",
-    url: "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx161645-7I8Cip7XRDhV.jpg",
-    tierId: "selection",
-  },
-];
-
 function App() {
   const [tiers] = useState(initialTiers);
-  const [anime, setAnime] = useState(initialAnime);
   const [activeId, setActiveId] = useState<UniqueIdentifier | null>(null);
+  const { anime, setAnime } = useFetchAnime(season, year);
 
   const onDragStart = (e: DragStartEvent) => {
     const { active } = e;
@@ -110,13 +78,13 @@ function App() {
 
   return (
     <div className="min-h-screen bg-slate-800">
-      <DndContext
-        collisionDetection={rectIntersection}
-        onDragStart={onDragStart}
-        onDragEnd={onDragEnd}
-        onDragOver={onDragOver}
-      >
-        <div className="mx-8 xl:mx-auto max-w-[1200px] grid gap-6">
+      <div className="mx-8 xl:mx-auto max-w-[1213px] grid gap-6">
+        <DndContext
+          collisionDetection={rectIntersection}
+          onDragStart={onDragStart}
+          onDragEnd={onDragEnd}
+          onDragOver={onDragOver}
+        >
           <TierList tiers={tiers} anime={anime} />
           <AnimeSelection
             anime={anime.filter((anime) => anime.tierId === "selection")}
@@ -126,8 +94,8 @@ function App() {
               <AnimeWidget title={draggedAnime.title} url={draggedAnime.url} />
             ) : null}
           </DragOverlay>
-        </div>
-      </DndContext>
+        </DndContext>
+      </div>
     </div>
   );
 }
