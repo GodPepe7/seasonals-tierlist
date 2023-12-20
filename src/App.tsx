@@ -14,6 +14,8 @@ import {
 import { arrayMove } from "@dnd-kit/sortable";
 import AnimeWidget from "./components/AnimeWidget";
 import useFetchAnime from "./hooks/useFetchAnime";
+import SeasonSelect from "./components/SeasonSelect";
+import YearSelect from "./components/YearSelect";
 
 const initialTiers: Tier[] = [
   { id: "s", name: "S", color: "red" },
@@ -26,6 +28,8 @@ const initialTiers: Tier[] = [
 function App() {
   const [tiers] = useState(initialTiers);
   const [activeId, setActiveId] = useState<UniqueIdentifier | null>(null);
+  const [season, setSeason] = useState("FALL");
+  const [year, setYear] = useState("2023");
   const { anime, setAnime } = useFetchAnime(season, year);
 
   const onDragStart = (e: DragStartEvent) => {
@@ -86,6 +90,10 @@ function App() {
           onDragOver={onDragOver}
         >
           <TierList tiers={tiers} anime={anime} />
+          <div className="flex gap-6">
+            <SeasonSelect setSeason={setSeason} />
+            <YearSelect setYear={setYear} />
+          </div>
           <AnimeSelection
             anime={anime.filter((anime) => anime.tierId === "selection")}
           />
