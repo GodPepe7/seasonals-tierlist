@@ -1,27 +1,37 @@
 import { SortableContext } from "@dnd-kit/sortable";
-import { Anime } from "../types";
+import { Tier, Anime } from "../types";
 import { useMemo } from "react";
 import SortableAnimeWidget from "./SortableAnimeWidget";
 import { useDroppable } from "@dnd-kit/core";
 
-type AnimeSelectionProps = {
+type TierRowProps = {
+  tier: Tier;
   anime: Anime[];
 };
 
-function AnimeSelection({ anime }: AnimeSelectionProps) {
+function TierRow({ tier, anime }: TierRowProps) {
+  const { id, name, color } = tier;
   const animeId = useMemo(() => anime.map((anime) => anime.id), [anime]);
-  const { setNodeRef, isOver } = useDroppable({
-    id: "selection",
-    data: { type: "tier" },
+  const { setNodeRef } = useDroppable({
+    id,
+    data: {
+      type: "tier",
+      data: { id, name, color },
+    },
   });
 
   return (
     <>
       <SortableContext items={animeId}>
         <div
-          className="flex flex-wrap bg-slate-900 gap-2 min-h-[166px] p-2"
+          className={`font-bold text-center text-3xl p-4`}
+          style={{ backgroundColor: color }}
+        >
+          {name}
+        </div>
+        <div
+          className="bg-slate-900 flex flex-wrap p-2 gap-2 min-h-[166px]"
           ref={setNodeRef}
-          style={isOver ? { border: "1px solid green" } : undefined}
         >
           {anime.map((anime) => (
             <SortableAnimeWidget {...anime} key={anime.id} />
@@ -32,4 +42,4 @@ function AnimeSelection({ anime }: AnimeSelectionProps) {
   );
 }
 
-export default AnimeSelection;
+export default TierRow;

@@ -1,33 +1,35 @@
-import { AnimeWithPlacement } from "../types";
+import { DraggableAttributes } from "@dnd-kit/core";
+import { SyntheticListenerMap } from "@dnd-kit/core/dist/hooks/utilities";
+import { forwardRef } from "react";
 
-type AnimeWidgetProps = {
-  animeWithPlacement: AnimeWithPlacement;
-  index: number;
-  draggedOverRef: React.MutableRefObject<number>;
+type Style = {
+  transform: string | undefined;
+  transition: string | undefined;
+  opacity?: number;
 };
 
-function AnimeWidget({
-  animeWithPlacement,
-  index,
-  draggedOverRef,
-}: AnimeWidgetProps) {
-  const { url, title, currentPlacement } = animeWithPlacement;
+type AnimeWidgetProps = {
+  url: string;
+  title: string;
+  style?: Style;
+  attributes?: DraggableAttributes;
+  listeners?: SyntheticListenerMap | undefined;
+};
 
-  const handleOnDrag = (e: React.DragEvent) => {
-    const animeToJson = JSON.stringify({ url, title, currentPlacement });
-    e.dataTransfer.setData("animeWithPlacement", animeToJson);
-  };
-
-  return (
-    <img
-      src={url}
-      alt={title}
-      className="aspect-[3/4] h-[150px]"
-      draggable
-      onDragStart={handleOnDrag}
-      onDragEnter={() => (draggedOverRef.current = index)}
-    />
-  );
-}
+const AnimeWidget = forwardRef<HTMLImageElement, AnimeWidgetProps>(
+  ({ url, title, style, attributes, listeners }, ref) => {
+    return (
+      <img
+        src={url}
+        alt={title}
+        className="aspect-[3/4] max-h-[150px]"
+        ref={ref}
+        {...attributes}
+        {...listeners}
+        style={style}
+      />
+    );
+  }
+);
 
 export default AnimeWidget;
