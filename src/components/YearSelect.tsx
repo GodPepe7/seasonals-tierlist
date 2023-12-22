@@ -11,7 +11,7 @@ function YearSelect({ setYear }: YearSelectProps) {
   return (
     <div className="text-white w-[150px]">
       <label htmlFor="year-select" className="block">
-        Choose A Year
+        Year
       </label>
       <select
         name="years"

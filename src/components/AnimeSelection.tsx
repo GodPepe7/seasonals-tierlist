@@ -23,9 +23,15 @@ function AnimeSelection({ anime }: AnimeSelectionProps) {
           ref={setNodeRef}
           style={isOver ? { border: "1px solid green" } : undefined}
         >
-          {anime.map((anime) => (
-            <SortableAnimeWidget {...anime} key={anime.id} />
-          ))}
+          {anime.length > 0 ? (
+            anime.map((anime) => (
+              <SortableAnimeWidget {...anime} key={anime.id} />
+            ))
+          ) : (
+            <p className="text-white text-4xl text-center">
+              Seems like there are no anime for this season/year
+            </p>
+          )}
         </div>
       </SortableContext>
     </>
