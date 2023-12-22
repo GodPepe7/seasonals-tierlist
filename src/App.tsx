@@ -61,7 +61,6 @@ function App() {
   const onDragOver = (e: DragOverEvent) => {
     const { over } = e;
     const overId = over?.id;
-    console.log(`${over?.data.current?.type}: ${overId}`);
 
     if (activeId === overId || !overId) return;
 
@@ -69,12 +68,13 @@ function App() {
       over.data.current?.type === "tier"
         ? over.id.toString()
         : over.data.current?.anime.tierId;
-    const draggedTierId = anime.find((anime) => anime.id === activeId)?.tierId;
+    const draggedAnime = anime.find((anime) => anime.id === activeId);
+    const draggedTierId = draggedAnime?.tierId;
     if (hoveringOverTierId === draggedTierId || !draggedTierId) return;
     setAnime((prevAnime) => {
-      return prevAnime.map((anime) =>
-        anime.id === activeId ? { ...anime, tierId: hoveringOverTierId } : anime
-      );
+      const filtered = prevAnime.filter((anime) => anime.id !== activeId);
+      filtered.push({ ...draggedAnime, tierId: hoveringOverTierId });
+      return filtered;
     });
   };
 
