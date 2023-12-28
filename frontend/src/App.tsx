@@ -52,8 +52,7 @@ function App() {
     )
       return;
     setAnime((prevAnime) => {
-      const reordered = arrayMove(prevAnime, dragging, hoveringOver);
-      return reordered;
+      return arrayMove(prevAnime, dragging, hoveringOver);
     });
     setActiveId(null);
   };
